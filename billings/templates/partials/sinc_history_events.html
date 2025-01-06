@@ -1,0 +1,29 @@
+<div class="card">
+    <div class="card-header text-card-title text-center">Atualização de Ficha Financeira</div>
+    <div class="card-body">
+        <div class="card-text">
+            {% if del %}
+            <p>{{del}}</p>
+            {% endif %}
+            <form method="post" class="row row-cols-lg-auto align-items-center mt-2 mb-2 needs-validation" enctype="multipart/form-data" novalidate>
+                <div class="col-12">
+                    <div class="input-group has-validation">
+                        <input type="file" name="file" id="file" class="form-control">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-outline-success" type="submit" id="btn-search">Atualizar <i class="fas fa-sync"></i></button>
+                </div>
+                <input type="hidden" name="sinc" value="sinc_history_events">
+                {% csrf_token %}
+            </form>
+            <form method="post" class="row row-cols-lg-auto align-items-center mt-2 mb-2 needs-validation" enctype="multipart/form-data" novalidate>
+                <div class="col-12">
+                    <button class="btn btn-outline-danger" type="submit" id="btn-search">Deletar <i class="fas fa-sync"></i></button>
+                </div>
+                <input type="hidden" name="sinc" value="del_history_events">
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
+</div>

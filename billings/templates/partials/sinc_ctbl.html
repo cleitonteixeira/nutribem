@@ -1,0 +1,23 @@
+<div class="card">
+    <div class="card-header text-card-title text-center">Atualização de Lançamentos Contábeis</div>
+    <div class="card-body">
+        <div class="card-text">
+            <form method="post" class="row row-cols-lg-auto align-items-center mt-2 mb-2 needs-validation" novalidate>
+                <div class="col-12">
+                    <div class="input-group has-validation">
+                        <div class="input-group-text">Mês:</div>
+                        <input type="month" value="{{ date|date:"Y-m" }}" class="form-control" id="data" name="data" required oninput="validarData()">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-outline-success" type="submit" id="btn-search">Atualizar <i class="fas fa-sync"></i></button>
+                </div>
+                <input type="hidden" name="sinc" value="sinc_ctbl">
+                {% csrf_token %}
+            </form>
+        </div>
+        <div class="card-footer">
+            Selecione o mês desejado e clique no botão para atualizar a base dos lançametnos contábeis.
+        </div>
+    </div>
+</div>

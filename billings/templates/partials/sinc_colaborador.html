@@ -1,0 +1,19 @@
+<div class="card">
+    <div class="card-header text-card-title text-center">Atualização de Colaboradores</div>
+    <div class="card-body">
+        <div class="card-text">
+            <form method="post" class="row row-cols-lg-auto align-items-center mt-2 mb-2 needs-validation" enctype="multipart/form-data" novalidate>
+                <div class="col-12">
+                    <div class="input-group has-validation">
+                        <input type="file" name="file" id="file" class="form-control">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-outline-success" type="submit" id="btn-search">Atualizar <i class="fas fa-sync"></i></button>
+                </div>
+                <input type="hidden" name="sinc" value="sinc_colaborador">
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
+</div>

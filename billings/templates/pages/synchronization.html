@@ -1,0 +1,107 @@
+{% extends "global/base.html" %}
+{% block title %}Sincronizar Dados | {% endblock title %}
+{% block content %}
+{% include "partials/menu.html" %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6 mt-2">
+            <div class="mb-2">
+                {% include "partials/sinc_ctbl.html" %}
+            </div>
+            <div class="mb-2">
+                {% include "partials/sinc_colaborador.html" %}
+            </div>
+            <div class="mb-2">
+                {% include "partials/sinc_events.html" %}
+            </div>
+            <div class="mb-2">
+                {% include "partials/sinc_history_events.html" %}
+            </div>
+        </div>
+        <style>
+            .table th{
+            position: sticky;
+            top: 0;
+            z-index: 1; /* Garante que fique acima das outras células */
+            }
+        </style>
+        <div class="col-6 mt-2">
+            <div class="row text-nowrap">
+                <div class="col">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="operador" value="sincronize">
+                        <button class="btn btn-sm btn-outline-success" type="submit">Sincronizar Operador</button>
+                    </form>
+                </div>
+                <div class="col">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="filial" value="sincronize">
+                        <button class="btn btn-sm btn-outline-success" type="submit">Sincronizar Filiais/CR</button>
+                    </form>
+                </div>
+                <div class="col">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="rc" value="sincronize">
+                        <button class="btn btn-sm btn-outline-success" type="submit">Sincronizar RC</button>
+                    </form>
+                </div>
+                <div class="col">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="classe" value="sincronize">
+                        <button class="btn btn-sm btn-outline-success" type="submit">Criar Classe</button>
+                    </form>
+                </div>
+                <div class="col mt-2">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="produto" value="sincronize">
+                        <button class="btn btn-sm btn-outline-success" type="submit">Criar Produtos</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if eventos %}
+        <p>Eventos Salvos: {{eventos.cont}}</p>
+        <p>Eventos Falha: {{eventos.falha}}</p>
+        <div class="row">
+            <div class="col-12 mt-2">
+                <div class="table-responsive table-cr">
+                    <table class="table table-bordered table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th class="p-3 mb-2 bg-secondary text-white">ID</th>
+                                <th class="p-3 mb-2 bg-secondary text-white">COLABORADOR</th>
+                                <th class="p-3 mb-2 bg-secondary text-white">COMPETENCIA</th>
+                                <th class="p-3 mb-2 bg-secondary text-white">OCORRENCIA</th>
+                                <th class="p-3 mb-2 bg-secondary text-white">TIPO MOVIMENTO</th>
+                                <th class="p-3 mb-2 bg-secondary text-white">CD EVENTO</th>
+                                <th class="p-3 mb-2 bg-secondary text-white">EVENTO</th>
+                                <th class="p-3 mb-2 bg-secondary text-white">VALOR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in eventos.event_error %}
+                            <tr>
+                                <td>{{event.cooperator.link}}</td>
+                                <td>{{event.cooperator.name}}</td>
+                                <td>{{event.competence}}</td>
+                                <td>{{ event.occurrence }}</td>
+                                <td>{{event.movement}}</td>
+                                <td>{{event.event.cod}}</td>
+                                <td>{{event.event.name}}</td>
+                                <td>{{event.value|floatformat:'2g'}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}

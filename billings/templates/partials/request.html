@@ -1,0 +1,51 @@
+<div class="card m-auto">
+    {% if itens %}
+    <div class="card-header">
+        <strong>{{ requisition.branch_destino.code }} - {{ requisition.branch_destino.name }}</strong>
+    </div>
+    {% endif %}
+    <div class="card-body">
+        <div class="card-text">
+            {% if itens %}
+            <div class="list-group-item list-group-item-action">              
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-2">{{requisition.nr_solicitacao}} - {{ requisition.branch_destino.code }}</h5>
+                    <small>{{requisition.data_solicitacao|date:"d/m/Y"}}</small>
+                </div>
+                <p class="mb-1 p-1 text-uppercase">
+                    {{ requisition.justificativa }}
+                </p>
+                <p class="mb-1"><strong>Aprovada em:</strong> {{ requisition.dh_aprovacao|date:"d/m/Y H:i" }}</p>
+                <p class="mb-1"><strong>Status:</strong> {{ requisition.status }}</p>
+                <p class="mb-1"><strong>Solicitante:</strong> {{requisition.operador.name}}</p>
+                {% if requisition.inicio_atendimento %}
+                <p class="mb-1"><strong>Início Atendimento:</strong> {{requisition.dh_inicio_atendimento|date:"d/m/Y H:i"}}</p>
+                <p class="mb-1"><strong>Responsável:</strong> {{requisition.operador_atendimento.name}}</p>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="Fim">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">FINALIZAR</button>
+                </form>
+                {% else %}
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="Inicio">
+                    <button type="submit" class="btn btn-outline-success btn-sm">INICIAR</button>
+                </form>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="list-group">
+                <a href="{% url "billings:requisition" requisition.id %}" class="list-group-item list-group-item-action text-small">
+                    {% comment %} <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{requisition.nr_solicitacao}} - {{ requisition.branch_destino.code }}</h5>
+                    </div> {% endcomment %}
+                    <P class="mb-1">{{requisition.nr_solicitacao}} - {{ requisition.branch_destino.code }}</P>
+                    <p class="mb-1">Ap.: {{ requisition.dh_aprovacao|date:"d/m/Y H:i" }}</p>
+                    <p class="mb-1">{{ requisition.status }}</p> 
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

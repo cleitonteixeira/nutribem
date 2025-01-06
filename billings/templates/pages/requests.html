@@ -1,0 +1,17 @@
+{% extends "global/base.html" %}
+{% block title %}Requisições | {% endblock title %}
+{% block content %}
+{% include "partials/menu.html" %}
+<div class="container-fluid">
+    <div class="row">
+        {% for requisition in requests %}
+        <div class="col-2 mt-1 text-nowrap">
+            {% include "partials/request.html" %}
+        </div>
+        {% empty %}
+        <h1>Sem requisições</h1>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

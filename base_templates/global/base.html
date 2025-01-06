@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>   
+    {% include "global/partials/head.html" %}
+    <title>{% block title %}{% endblock title %}Nutribem</title>
+</head>
+<body>
+    <div>
+        {% block content %}{% endblock content %}
+    </div>
+    {% include "global/partials/footer.html" %}
+</body>
+</html>
