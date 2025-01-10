@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>   
+    {% include "global/partials/head.html" %}
+    <title>Login - Nutribem</title>
+</head>
+<body>
+    <div class="container-fluid d-flex justify-content-center align-items-center"  style="height: 100vh;">
+        <div class="row">
+            <form method="post">
+                <div class="row mb-3">
+                  <label for="id_username" class="col-sm-3 col-form-label">Usuário:</label>
+                  <div class="col-sm-9">
+                    <input type="text" name="username" class="form-control"  autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="id_password" class="col-sm-3 col-form-label">Password:</label>
+                  <div class="col-sm-9">
+                    <input type="password" name="password" class="form-control" id="id_password" autocomplete="current-password">
+                  </div>
+                </div>
+                {% csrf_token %}
+
+                <button type="submit" class="btn btn-primary">Sign in</button>
+              </form>
+        </div>
+    </div>
+    {% include "global/partials/footer.html" %}
+</body>
+</html>

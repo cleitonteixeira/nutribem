@@ -1,0 +1,46 @@
+{% extends "global/base.html" %}
+{% block title %}Requisições | {% endblock title %}
+{% block content %}
+{% include "partials/menu.html" %}
+<div class="container-fluid">
+    <div class="row">
+        
+        <div class="col-8 mt-2">
+            <div class="card">
+                <div class="card-header text-center">
+                    INSUMOS
+                </div>
+                <div class="card-body">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-2 mt-2">
+            <div class="card">
+                <div class="card-header text-center">
+                    UTENSÍLIOS
+                </div>
+                <div class="card-body">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-2 mt-2">
+            <div class="card">
+                <div class="card-header text-center">
+                    EPI
+                </div>
+                <div class="card-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Atualiza a página a cada 15 minutos (900000 ms)
+    setInterval(function () {
+        window.location.reload();
+    }, 900000); // 900000 ms = 15 minutos
+</script>
+{% endblock content %}

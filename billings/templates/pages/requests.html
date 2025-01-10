@@ -13,5 +13,10 @@
         {% endfor %}
     </div>
 </div>
-
+<script>
+    // Atualiza a página a cada 15 minutos (900000 ms)
+    setInterval(function () {
+        window.location.reload();
+    }, 900000); // 900000 ms = 15 minutos
+</script>
 {% endblock content %}

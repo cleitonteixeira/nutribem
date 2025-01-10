@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'django_crontab',
     # Criados Manualmente
     'billings',
+    'synchronize',
+    'valid',
+    'sefaz'
 ]
 
 MIDDLEWARE = [
@@ -176,5 +179,9 @@ LOGGING = {
 }
 
 CRONJOBS = [
-    ('*/1 * * * *', 'synchronize.cron.run')
+    ('*/15 * * * *', 'synchronize.cron.run')
 ]
+
+LOGIN_URL = '/login/'
+
+LOGIN_REDIRECT = '/requests/'

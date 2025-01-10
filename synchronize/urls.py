@@ -4,5 +4,5 @@ from . import views
 app_name = 'synchronize'
 
 urlpatterns = [
-   path('', views.synchronize, name='synchronize'),
+   path('synct/', views.synchronize, name='synchronize'),
 ] 

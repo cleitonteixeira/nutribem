@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.template.loader import get_template
 from django.db.models import Sum, Q
 from django.db.models.functions import TruncMonth
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime, timedelta
 from .models import *
@@ -1110,8 +1111,16 @@ def getExpenseType(date):
         })
     return expense
 
+@login_required
 def requests(request):
     return render(request, 'pages/requests.html', context={
+        'requests': Requisicao.objects.filter(
+            finalizada=False).order_by('dh_aprovacao')
+    })
+    
+@login_required
+def requests_v2(request):
+    return render(request, 'pages/requests_v2.html', context={
         'requests': Requisicao.objects.filter(
             finalizada=False).order_by('dh_aprovacao')
     })

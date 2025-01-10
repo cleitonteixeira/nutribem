@@ -8,4 +8,3 @@ def run():
     views.SincRC()
     print("Sincronizando")
     logger.info("Sincronizado")
-    

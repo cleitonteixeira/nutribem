@@ -2,7 +2,13 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
+class Base(models.Model):
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    
+    class Meta:
+        abstract = True
+
 class TypeBranch(models.Model):
     name = models.CharField(max_length=50)
     created_at = models.DateField(auto_now_add=True)
@@ -193,6 +199,7 @@ class Requisicao(models.Model):
     dh_inicio_atendimento = models.DateTimeField(null=True)
     finalizada = models.BooleanField(default=False)
     dh_finalizada = models.DateTimeField(null=True)
+    observation = models.TextField(blank=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     def __str__(self):

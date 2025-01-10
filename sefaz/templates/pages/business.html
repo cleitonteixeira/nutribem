@@ -1,0 +1,46 @@
+{% extends "global/base.html" %}
+{% block title %}Empresas | {% endblock title %}
+{% block content %}
+{% include "partials/menu.html" %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 text-center mt-1">
+            <h3>Cadastro Empresas/Filiais</h3>
+        </div>
+        <div class="col-6">
+            <form method="post" enctype="multipart/form-data" class="w-100 h-50">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn btn-success btn-sm" type="submit">Salvar</button>
+            </form>
+        </div>
+        <div class="col-6 mt-1">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            NOME
+                        </th>
+                        <th>
+                            CNPJ
+                        </th>
+                        <th>
+                            UF
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in business %}
+                    <tr>
+                        <td>{{ b.name }}</td>
+                        <td>{{ b.cnpj }}</td>
+                        <td>{{ b.uf }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+</div>
+{% endblock content %}

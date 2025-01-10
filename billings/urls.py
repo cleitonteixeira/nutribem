@@ -4,12 +4,13 @@ from . import views
 app_name = 'billings'
 
 urlpatterns = [
-    path("/", views.home, name="index"),
+    path('', views.home, name="index"),
     path('invoices/',views.invoices, name="invoices"),
     path('invoice/<int:id>', views.invoice, name="invoice"),
     path('costs/', views.costs, name="costs"),
     path('dashboard_faturamento/', views.dashboard_faturamento, name="dashboard_faturamento"),
     path('requests/', views.requests, name="requests"),
+    path('requests_v2/', views.requests_v2, name="requests_v2"),
     path('dre/', views.dre, name="dre"),
     path('expenses_cr/', views.expenses_cr, name="expenses_cr"),
     path('expenses_type/', views.expenses_type, name="expenses_type"),
