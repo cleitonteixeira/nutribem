@@ -5,33 +5,93 @@
 <div class="container-fluid">
     <div class="row">
         
-        <div class="col-8 mt-2">
+        <div class="col-8 mt-1 m-0">
             <div class="card">
                 <div class="card-header text-center">
                     INSUMOS
                 </div>
                 <div class="card-body">
-                    
+                    <div class="container-fluid">
+                        <div class="row">
+                            {% for requisition in rq_insumo %}
+                            <div class="col m-1 text-nowrap border rounded p-1 text-center
+                            {% if requisition.progress == 2 %}
+                            bg-warning text-white
+                            {% elif requisition.progress == 3 %}
+                            bg-danger text-white
+                            {% endif %}
+                            ">
+                                <a href="{% url "billings:requisition" requisition.id %}" class="list-group-item list-group-item-action text-small">
+                                    <p class="mb-1">{{requisition.nr_solicitacao}} - {{ requisition.branch_destino.code }}</p>
+                                    <p class="mb-1">Ap.: {{ requisition.dh_aprovacao|date:"d/m/Y H:i" }}</p>
+                                    <p class="mb-1">{{ requisition.get_status_display }}</p> 
+                                </a>
+                            </div>
+                            {% empty %}
+                            <p>Sem requisições</p>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-2 mt-2">
-            <div class="card">
-                <div class="card-header text-center">
-                    UTENSÍLIOS
-                </div>
-                <div class="card-body">
-
-                </div>
-            </div>
-        </div>
-        <div class="col-2 mt-2">
+        <div class="col-2 mt-1 m-0">
             <div class="card">
                 <div class="card-header text-center">
                     EPI
                 </div>
                 <div class="card-body">
-
+                    <div class="container-fluid">
+                        <div class="row">
+                            {% for requisition in rq_epi %}
+                            <div class="col m-1 text-nowrap border rounded p-1 text-center
+                            {% if requisition.progress == 2 %}
+                            bg-warning text-white
+                            {% elif requisition.progress == 3 %}
+                            bg-danger text-white
+                            {% endif %}
+                            ">
+                                <a href="{% url "billings:requisition" requisition.id %}" class="list-group-item list-group-item-action text-small">
+                                    <p class="mb-1">{{requisition.nr_solicitacao}} - {{ requisition.branch_destino.code }}</p>
+                                    <p class="mb-1">Ap.: {{ requisition.dh_aprovacao|date:"d/m/Y H:i" }}</p>
+                                    <p class="mb-1">{{ requisition.get_status_display }}</p> 
+                                </a>
+                            </div>
+                            {% empty %}
+                            <p>Sem requisições</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-2 mt-1 m-0">
+            <div class="card">
+                <div class="card-header text-center">
+                    OUTROS
+                </div>
+                <div class="card-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            {% for requisition in rq_outros %}
+                            <div class="col m-1 text-nowrap border rounded p-1 text-center
+                            {% if requisition.progress == 2 %}
+                            bg-warning text-white
+                            {% elif requisition.progress == 3 %}
+                            bg-danger text-white
+                            {% endif %}
+                            ">
+                                <a href="{% url "billings:requisition" requisition.id %}" class="list-group-item list-group-item-action text-small">
+                                    <p class="mb-1">{{requisition.nr_solicitacao}} - {{ requisition.branch_destino.code }}</p>
+                                    <p class="mb-1">Ap.: {{ requisition.dh_aprovacao|date:"d/m/Y H:i" }}</p>
+                                    <p class="mb-1">{{ requisition.get_status_display }}</p> 
+                                </a>
+                            </div>
+                            {% empty %}
+                            <p>Sem requisições</p>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

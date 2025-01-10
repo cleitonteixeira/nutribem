@@ -16,9 +16,13 @@
                     {{ requisition.justificativa }}
                 </p>
                 <p class="mb-1"><strong>Aprovada em:</strong> {{ requisition.dh_aprovacao|date:"d/m/Y H:i" }}</p>
-                <p class="mb-1"><strong>Status:</strong> {{ requisition.status }}</p>
+                <p class="mb-1"><strong>Status:</strong> {{ requisition.get_status_display }}</p>
                 <p class="mb-1"><strong>Solicitante:</strong> {{requisition.operador.name}}</p>
-                {% if requisition.inicio_atendimento %}
+                {%if requisition.finalizada %}
+                <p class="mb-1"><strong>Início Atendimento:</strong> {{requisition.dh_inicio_atendimento|date:"d/m/Y H:i"}}</p>
+                <p class="mb-1"><strong>Responsável:</strong> {{requisition.operador_atendimento.name}}</p>
+                <p><strong>Finalizada em:</strong> {{requisition.dh_finalizada|date:"d/m/Y H:i"}}</p>
+                {% elif requisition.inicio_atendimento %}
                 <p class="mb-1"><strong>Início Atendimento:</strong> {{requisition.dh_inicio_atendimento|date:"d/m/Y H:i"}}</p>
                 <p class="mb-1"><strong>Responsável:</strong> {{requisition.operador_atendimento.name}}</p>
                 <form action="" method="post">

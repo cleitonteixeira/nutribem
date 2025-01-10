@@ -185,6 +185,22 @@ class Operador(models.Model):
         verbose_name = 'operador'
         
 class Requisicao(models.Model):
+    STATUS_CHOICE = (
+        (1,'AGUARDANDO'),
+        (2,'EM ATENDIMENTO'),
+        (3,'FINALIZADA'),
+    )
+    CLASS_CHOICE = (
+        (1,'INSUMO'),
+        (2,'EPI'),
+        (3,'OUTROS'),
+    )
+    PROGRESS_CHOICE = (
+        (1,'NO PRAZO'),
+        (2,'PENDENTE'),
+        (3,'ATRASADO'),
+        (4, 'CONCLUIDO'),
+    )
     branch_solicitacao = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, related_name="branch_solicitacao")
     branch_destino = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, related_name="branch_destino")
     operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, related_name="operador")
@@ -193,17 +209,19 @@ class Requisicao(models.Model):
     data_solicitacao = models.DateField()
     qtd_itens = models.IntegerField()
     justificativa = models.CharField(max_length=50)
-    status = models.CharField(max_length=50, default="AGUARDANDO")
+    status = models.IntegerField('STATUS',choices=STATUS_CHOICE, default=1)
+    classification = models.IntegerField('Classe', choices=CLASS_CHOICE, default=1)
     inicio_atendimento = models.BooleanField(default=False)
-    operador_atendimento = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, related_name="operador_atendimento")
-    dh_inicio_atendimento = models.DateTimeField(null=True)
+    operador_atendimento = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, blank=True, related_name="operador_atendimento")
+    dh_inicio_atendimento = models.DateTimeField(null=True, blank=True)
     finalizada = models.BooleanField(default=False)
-    dh_finalizada = models.DateTimeField(null=True)
+    dh_finalizada = models.DateTimeField(null=True, blank=True)
     observation = models.TextField(blank=True)
+    progress = models.IntegerField('Progresso',choices=PROGRESS_CHOICE, default=1)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
-        return f"{self.nr_solicitacao} - {self.data_solicitacao} - {self.qtd_itens} - {self.justificativa} - {self.status}"
+        return f"{self.nr_solicitacao} - {self.data_solicitacao} - {self.qtd_itens} - {self.justificativa} - {self.get_status_display()}"
     
     class Meta:
         ordering = ['data_solicitacao','branch_solicitacao','nr_solicitacao']

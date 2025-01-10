@@ -179,7 +179,9 @@ LOGGING = {
 }
 
 CRONJOBS = [
-    ('*/15 * * * *', 'synchronize.cron.run')
+    ('*/15 * * * *', 'synchronize.cron.run'),
+    ('*/15 * * * *', 'synchronize.cron.refresh_requests'),
+    
 ]
 
 LOGIN_URL = '/login/'

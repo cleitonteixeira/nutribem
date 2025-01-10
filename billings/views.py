@@ -13,6 +13,7 @@ import openpyxl
 from . import completaBD
 from . import completDRE
 from . import attBanco
+from . import organize
 
 def ExpenseDataCreate(data):
     print (data)
@@ -909,29 +910,6 @@ def dashboard_faturamento(request):
             'tributos': getTributos(date),
             'segmentacao': getBillingTypeSeg()
         })
-        
-def reportFaturamento(request):
-    date = datetime.strptime(request.POST.get('iDate'), '%Y-%m')
-    template = get_template('pages/report_faturamento.html')
-    context = {
-        'billingHistory': getBillingHistory(),
-        'expenseHistory': getExpenseHistory(),
-        'billingType': getBillingType(date),
-        'expenseType': getExpenseType(date),
-        'totalRevenue': getTotalRevenue()
-    }
-    html = template.render(context)
-    
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
-    
-    pdf = canvas.Canvas(response)
-    pdf.drawString(100, 750, html)  # Renderiza o HTML no PDF
-
-    pdf.showPage()
-    pdf.save()
-
-    return response
 
 def variation(date):
     variation = []
@@ -1099,9 +1077,14 @@ def requests(request):
     
 @login_required
 def requests_v2(request):
+    organize.refresh_requests()
     return render(request, 'pages/requests_v2.html', context={
-        'requests': Requisicao.objects.filter(
-            finalizada=False).order_by('dh_aprovacao')
+        'rq_insumo': Requisicao.objects.filter(
+            finalizada=False, classification='1').order_by('dh_aprovacao'),
+        'rq_epi': Requisicao.objects.filter(
+            finalizada=False, classification='2').order_by('dh_aprovacao'),
+        'rq_outros': Requisicao.objects.filter(
+            finalizada=False, classification='3').order_by('dh_aprovacao'),
     })
     
 def SincRC():
@@ -1134,7 +1117,35 @@ def SincRC():
                 )
                 item.save()
                 print("Item Atualizado")
-            
+        ClassRequisition()
+
+def ClassRequisition():
+    rc = Requisicao.objects.order_by('-created_at').first()
+    produto = ItensRequisicao.objects.filter(requisicao=rc).first()
+    produto = produto.produto.code[0:3]
+    
+    insumo = [1, 2, 3, 4]
+    epi = 866
+    outros = [5,6,7,8,9]
+    print(produto[0])
+    if produto == epi:
+        rc.classification = 2
+        rc.save()
+    elif comparar_primeiro_digito(produto,insumo):
+        rc.classification = 1
+        rc.save()
+    else:
+        rc.classification = 3
+        rc.save()
+
+def comparar_primeiro_digito(numero, lista_numeros):
+    primeiro_digito_produto = str(numero)[0]
+    for num in lista_numeros:
+        primeiro_digito_num = str(num)[0]
+        if primeiro_digito_produto == primeiro_digito_num:
+            return True
+    return False
+
 def requisition(request, id):
     if request.POST.get('status') is not None:
         return render(request, 'pages/requisition.html', context={
@@ -1152,9 +1163,15 @@ def requisition(request, id):
 def updateRequisicao(id, status, user):
     rc = Requisicao.objects.get(id=id)
     if status == "Inicio":
-        rc.status = "EM ATENDIMENTO"
+        rc.status = 2
         rc.inicio_atendimento = True
         rc.operador_atendimento = Operador.objects.get(user=user)
         rc.dh_inicio_atendimento = datetime.now()
+        rc.save()
+    elif status == "Fim":
+        rc.status = 3
+        rc.finalizada = True
+        rc.dh_finalizada = datetime.now()
+        rc.progress = 4
         rc.save()
     return rc

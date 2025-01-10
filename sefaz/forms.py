@@ -8,12 +8,12 @@ class BusinessForm(forms.ModelForm):
         model = Business
         fields = '__all__'
         widgets = {
-            'uf': forms.Select(attrs={'class': 'form-control form-control-sm'}),
-            'certificate': forms.FileInput(attrs={'class': 'form-control form-control-sm', 'accept': '.pfx'}),
-            'password': forms.PasswordInput(attrs={'class': 'form-control form-control-sm'}),
-            'nsu': forms.NumberInput(attrs={'class': 'form-control form-control-sm','min': '0'}),
-            'name': forms.TextInput(attrs={'class': 'form-control form-control-sm'}),
-            'cnpj': forms.TextInput(attrs={'class': 'form-control form-control-sm'})
+            'uf': forms.Select(attrs={'class': 'form-control form-control-sm mb-1 mb-1'}),
+            'certificate': forms.FileInput(attrs={'class': 'form-control form-control-sm mb-1', 'accept': '.pfx'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control form-control-sm mb-1'}),
+            'nsu': forms.NumberInput(attrs={'class': 'form-control form-control-sm mb-1','min': '0'}),
+            'name': forms.TextInput(attrs={'class': 'form-control form-control-sm mb-1'}),
+            'cnpj': forms.TextInput(attrs={'class': 'form-control form-control-sm mb-1','id': 'id_cnpj','placeholder': '00.000.000/0000-00'}),
         }
         
     def clean_nsu(self):
