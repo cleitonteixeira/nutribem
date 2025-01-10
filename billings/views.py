@@ -429,11 +429,6 @@ def synchronization(request):
         return render(request, 'pages/synchronization.html', context={
             'date': date
         })
-    elif request.POST.get('classe') == 'sincronize':
-        CreateClasses()
-        return render(request, 'pages/synchronization.html', context={
-            'date': date
-        })
     elif request.POST.get('produto') == 'sincronize':
         CreateProd()
         return render(request, 'pages/synchronization.html', context={
@@ -487,22 +482,6 @@ def CreateProd():
         try:    
             if not Produtos.objects.filter(code=prod[1]).exists():
                 p.save()
-                print("Salvo")
-            else:
-                print("Ja Existe")
-        except Exception as e:
-            print(e)
-
-def CreateClasses():
-    classes = attBanco.CriaClasse()
-    for cl in classes:
-        c = ClassProduto(
-            code = cl[0],
-            name = cl[1]
-        )
-        try:    
-            if not ClassProduto.objects.filter(code=cl[0]).exists():
-                c.save()
                 print("Salvo")
             else:
                 print("Ja Existe")
