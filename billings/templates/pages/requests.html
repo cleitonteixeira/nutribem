@@ -1,7 +1,6 @@
-{% extends "global/base.html" %}
+{% extends "pages/initial.html" %}
 {% block title %}Requisições | {% endblock title %}
-{% block content %}
-{% include "partials/menu.html" %}
+{% block content_app %}
 <div class="container-fluid">
     <div class="row">
         {% for requisition in requests %}
@@ -19,4 +18,4 @@
         window.location.reload();
     }, 900000); // 900000 ms = 15 minutos
 </script>
-{% endblock content %}
+{% endblock content_app %}

@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     # Criados Manualmente
     'billings',
     'synchronize',
-    'valid',
+    'validation',
     'sefaz'
 ]
 
@@ -186,4 +186,4 @@ CRONJOBS = [
 
 LOGIN_URL = '/login/'
 
-LOGIN_REDIRECT = '/requests/'
+LOGIN_REDIRECT_URL = '/'

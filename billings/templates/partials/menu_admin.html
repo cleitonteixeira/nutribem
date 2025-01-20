@@ -14,7 +14,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item {% if 'dashboard_faturamento' in request.path %}active{% endif %}" href="{% url "billings:dashboard_faturamento" %}">Receita</a></li>
-                            <li><a class="dropdown-item {% if 'requests' in request.path %}active{% endif %}" href="{% url "billings:requests" %}">Requisições</a></li>
+                            <li><a class="dropdown-item {% if 'dashboard_purchasing' in request.path %}active{% endif %}" href="{% url "billings:dashboard_purchasing" %}">Compras</a></li>
                           <li><a class="dropdown-item {% if 'dre' in request.path %}active{% endif %}" href="{% url "billings:dre" %}">DRE</a></li>
                         </ul>
                     </li>
@@ -49,7 +49,18 @@
                     </li>
                 </ul>
                 <span class="navbar-text">
-                    {% if user.is_authenticated %}Bem Vindo, {{ user.first_name }}!{% endif %}
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Bem Vindo, {{ user.first_name }}!
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a href="{% url 'validation:profile' %}" class="dropdown-item">Perfil</a></li>
+                            <li><a href="{% url 'validation:change_password' %}" class="dropdown-item">Alterar Senha</a></li>
+                            <li><a href="{% url 'validation:logout' %}" class="dropdown-item">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </span>
             </div>
         </div>

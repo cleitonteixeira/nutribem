@@ -44,3 +44,12 @@
     max-height: 30rem !important;
     overflow-y: auto !important;
 }
+.alert-error{
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+}
+.form-container img {
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

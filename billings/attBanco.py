@@ -64,18 +64,35 @@ def consultaRc():
 
         cursor.execute(f"""
             SELECT
-            s.CDFILSOLI, s.CDFILLANCA, s.NRSOLICMP, s.DTSOLCMP, o.CDOPERADOR, s.QTITEMSOLIC, m.DSJUSTSOLEXT,i.DTHRAPROVSOL,
-            CASE
-            WHEN COUNT(i.CDOPERAPROV) = s.QTITEMSOLIC THEN 'APROVADA'
-            WHEN COUNT(i.CDOPERAPROV) < s.QTITEMSOLIC AND COUNT(i.CDOPERAPROV) > 0  THEN 'APROVADA PARCIALMENTE'
-            ELSE 'REPROVADA'
-            END AS "STATUS"
+                s.CDFILSOLI,
+                s.CDFILLANCA,
+                s.NRSOLICMP,
+                s.DTSOLCMP,
+                o.CDOPERADOR,
+                s.QTITEMSOLIC,
+                m.DSJUSTSOLEXT,
+                (
+                    SELECT MAX(its.DTHRAPROVSOL)
+                    FROM ITEMSOLI its
+                    WHERE its.CDFILSOLI = s.CDFILSOLI
+                    AND its.CDFILLAN = s.CDFILLANCA
+                    AND its.NRSOLICMP = s.NRSOLICMP
+                ) AS "HORA",
+                CASE
+                    WHEN COUNT(i.CDOPERAPROV) = COUNT(i.CDPRODUTO) THEN 'APROVADA'
+                    ELSE 'REPROVADA'
+                END AS "STATUS"
             FROM SOLICITA s
             INNER JOIN FILIAL f ON f.CDFILIAL = s.CDFILSOLI
             INNER JOIN OPERADOR o ON o.CDOPERADOR = s.CDOPERLANC
-            INNER JOIN MOVSOLEXT m ON m.CDFILSOLEXT = s.CDFILSOLI AND m.CDFILLANCEXT = s.CDFILLANCA AND m.NRSOLIMOVEXT = s.NRSOLICMP
-            INNER JOIN ITEMSOLI i ON i.CDFILSOLI = s.CDFILSOLI AND i.CDFILLAN = s.CDFILLANCA AND i.NRSOLICMP = s.NRSOLICMP
-            WHERE s.DTSOLCMP >= '01/01/2025' AND s.IDSOLEXTRA = 'S'
+            INNER JOIN MOVSOLEXT m ON m.CDFILSOLEXT = s.CDFILSOLI 
+            AND m.CDFILLANCEXT = s.CDFILLANCA 
+            AND m.NRSOLIMOVEXT = s.NRSOLICMP
+            INNER JOIN ITEMSOLI i ON i.CDFILSOLI = s.CDFILSOLI 
+            AND i.CDFILLAN = s.CDFILLANCA 
+            AND i.NRSOLICMP = s.NRSOLICMP
+            WHERE s.DTSOLCMP >= TO_DATE('01/01/2025', 'DD/MM/YYYY') 
+            AND s.IDSOLEXTRA = 'S'
             GROUP BY
                 s.CDFILSOLI,
                 f.NMFILIAL,
@@ -84,10 +101,9 @@ def consultaRc():
                 s.DTSOLCMP,
                 o.CDOPERADOR,
                 s.QTITEMSOLIC,
-                m.DSJUSTSOLEXT,
-                i.DTHRAPROVSOL
-            HAVING 
-                COUNT(i.CDOPERAPROV) = s.QTITEMSOLIC
+                m.DSJUSTSOLEXT
+            HAVING
+                COUNT(i.CDOPERAPROV) = COUNT(i.CDPRODUTO)
             ORDER BY s.DTSOLCMP, s.CDFILSOLI, s.NRSOLICMP
         """)
         rows = cursor.fetchall()

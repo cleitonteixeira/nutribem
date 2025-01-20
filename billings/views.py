@@ -1,11 +1,12 @@
 from django.shortcuts import render,redirect
 from django.template.loader import get_template
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, Count
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime, timedelta
 from .models import *
+from .forms import *
 import pandas as pd
 import calendar
 import openpyxl
@@ -13,7 +14,6 @@ import openpyxl
 from . import completaBD
 from . import completDRE
 from . import attBanco
-from . import organize
 
 def ExpenseDataCreate(data):
     print (data)
@@ -245,10 +245,9 @@ def calc_percent (last,second_last):
     v_final = round(v_final,2)
     return v_final
 
+@login_required
 def home (request):
-    return render(request, 'pages/home.html', context={
-        'invoices': 'a'
-    })
+    return render(request, 'pages/home.html')
 
 def invoices (request):
     data = datetime.now()
@@ -1069,27 +1068,126 @@ def getExpenseType(date):
     return expense
 
 @login_required
-def requests(request):
-    return render(request, 'pages/requests.html', context={
-        'requests': Requisicao.objects.filter(
-            finalizada=False).order_by('dh_aprovacao')
-    })
+def requests(request, codigo):
+    if codigo == 0:
+        return render(request, 'pages/requests_v2.html', context={
+            'rq_insumo': Requisicao.objects.filter(
+                finalizada=False, classification='1').order_by('dh_aprovacao'),
+            'rq_epi': Requisicao.objects.filter(
+                finalizada=False, classification='2').order_by('dh_aprovacao'),
+            'rq_outros': Requisicao.objects.filter(
+                finalizada=False, classification='3').order_by('dh_aprovacao'),
+        })
+    elif codigo == 1:
+        return render(request, 'pages/requests_v2.html', context={
+            'rq_insumo': Requisicao.objects.filter(
+                finalizada=True, classification='1').order_by('dh_aprovacao'),
+            'rq_epi': Requisicao.objects.filter(
+                finalizada=True, classification='2').order_by('dh_aprovacao'),
+            'rq_outros': Requisicao.objects.filter(
+                finalizada=True, classification='3').order_by('dh_aprovacao'),
+        })
     
 @login_required
 def requests_v2(request):
-    organize.refresh_requests()
-    return render(request, 'pages/requests_v2.html', context={
-        'rq_insumo': Requisicao.objects.filter(
-            finalizada=False, classification='1').order_by('dh_aprovacao'),
-        'rq_epi': Requisicao.objects.filter(
-            finalizada=False, classification='2').order_by('dh_aprovacao'),
-        'rq_outros': Requisicao.objects.filter(
-            finalizada=False, classification='3').order_by('dh_aprovacao'),
+    return redirect('billings:requests')
+
+@login_required
+def dashboard_purchasing(request):
+    today = datetime.now()
+    total_requests_month = Requisicao.objects.filter(
+        data_solicitacao__month=today.month,
+        data_solicitacao__year=today.year
+    ).values('classification').annotate(total=Count('id'))
+    hours_insumos = CalcServiceTime(today,1)
+    hours_epi = CalcServiceTime(today,2)
+    hours_outros = CalcServiceTime(today,3)
+    
+    requester = LargestRequester(today)
+    products = MostRequestedProducts(today)
+    return render(request, 'pages/dashboard_purchasing.html', context={
+        'total_requests_month': total_requests_month,
+        'hours_insumos': hours_insumos,
+        'hours_epi':hours_epi,
+        'hours_outros':hours_outros,
+        'requester': requester,
+        'products': products
     })
+
+def CalcServiceTime(today, classification):
+    requests = Requisicao.objects.filter(
+        data_solicitacao__month=today.month,
+        data_solicitacao__year=today.year,
+        finalizada=True,
+        classification=classification
+    )
+    
+    hours = 0
+    if requests.count() > 0:
+        for r in requests:
+            hours += ServiceTime(r.dh_inicio_atendimento, r.dh_finalizada)
+        return (hours / requests.count())
+    else:
+        return 0
+    
+def ServiceTime( start_date, end_date ):
+    # Combina data e hora para criar objetos datetime completos
+
+    start_date_str = datetime.strftime(start_date, "%Y-%m-%d %H:%M:%S%z")
+    end_date_str = datetime.strftime(end_date, "%Y-%m-%d %H:%M:%S%z")
+
+    inicio = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M:%S%z")
+    fim = datetime.strptime(end_date_str, "%Y-%m-%d %H:%M:%S%z") 
+
+    # Verifica se o intervalo é válido
+    if fim <= inicio:
+        return 0
+
+    horas_uteis = 0
+    data_atual = inicio
+    while data_atual < fim:
+        if data_atual.weekday() < 5:  # Dias úteis: segunda (0) a sexta (4)
+            # Calcula as horas úteis do dia atual, considerando os horários de início e fim
+            horas = fim - data_atual
+            horas_uteis += horas.total_seconds() / 3600
+        data_atual += timedelta(days=1)
+
+    return horas_uteis
+
+def LargestRequester(today):
+    try:
+        branchs = Requisicao.objects.filter(
+                data_solicitacao__month=today.month,
+                data_solicitacao__year=today.year,
+            ).values('branch_destino').annotate(
+                total=Count('id')
+            ).order_by('-total')[:5]
+        branchs_ids = [branchs['branch_destino'] for branchs in branchs]
+        return Requisicao.objects.filter(
+                data_solicitacao__month=today.month,
+                data_solicitacao__year=today.year,
+                branch_destino__in=branchs_ids
+            ).values('branch_destino__name').annotate(
+                total=Count('id')
+            ).order_by('-total')
+    except IndexError:
+        return None
+
+def MostRequestedProducts(today):
+    try:
+        return ItensRequisicao.objects.filter(
+            requisicao__data_solicitacao__month=today.month,
+            requisicao__data_solicitacao__year=today.year
+        ).values('produto__name').annotate(
+            total=Count('id')
+        ).order_by('-total')[:5]
+    except IndexError:
+        return None
     
 def SincRC():
     CreateProd()
     rec = attBanco.consultaRc()
+    print(rec)
     for r in rec:
         rc = Requisicao(
             branch_solicitacao = Branch.objects.get(code=r[0]),
@@ -1127,7 +1225,6 @@ def ClassRequisition():
     insumo = [1, 2, 3, 4]
     epi = 866
     outros = [5,6,7,8,9]
-    print(produto[0])
     if produto == epi:
         rc.classification = 2
         rc.save()
@@ -1146,32 +1243,73 @@ def comparar_primeiro_digito(numero, lista_numeros):
             return True
     return False
 
+@login_required
 def requisition(request, id):
-    if request.POST.get('status') is not None:
-        return render(request, 'pages/requisition.html', context={
-            'requisition': updateRequisicao(id, request.POST.get('status'), request.user),
-            'itens': ItensRequisicao.objects.filter(requisicao=id),
-            'detail': True
+    rc = Requisicao.objects.get(id=id)
+    itens = ItensRequisicao.objects.filter(requisicao=id)
+    if request.method == 'POST':
+        if request.POST.get('status') == "2":
+            form = StartRequestForm( request.POST, instance=rc )
+            if form.is_valid():
+                form.save()
+                form = EndRequestForm( initial={'status': '3'},instance=rc )
+                return render(request, 'pages/requisition_v2.html',context={
+                        'form': form,
+                        'requisition': rc,
+                        'itens': itens,
+                        'detail': True,
+                        'label': 'Finalizar Atendimento'
+                    })
+        elif request.POST.get('status') == "3":
+            form = EndRequestForm( request.POST, instance=rc )
+            if form.is_valid():
+                form.save()
+                return render(request, 'pages/requisition_v2.html',context={
+                        'requisition': rc,
+                        'itens': itens,
+                        'detail': True,
+                    })
+        else:
+            return render(request, 'pages/requisition_v2.html', context={
+                    'requisition': rc,
+                    'itens': itens,
+                    'detail': True,
+                })
+    
+    elif rc.inicio_atendimento == False:
+        form = StartRequestForm(
+            initial={
+                    'status': '2',
+                    'operador_atendimento': Operador.objects.get(user=request.user),
+                    'inicio_atendimento':True,
+                    'dh_inicio_atendimento':datetime.now(),
+                },instance=rc )
+        return render(request, 'pages/requisition_v2.html', context={
+            'form': form,
+            'requisition': rc,
+            'itens': itens,
+            'detail': True,
+            'label': 'Iniciar Atendimento'
+        })
+    elif rc.inicio_atendimento and not rc.finalizada:
+        form = EndRequestForm( 
+                              initial={
+                                  'status': '3',
+                                  'finalizada': True,
+                                  'dh_finalizada': datetime.now(),
+                                  'progress': '4'
+                                  },
+                              instance=rc )
+        return render(request, 'pages/requisition_v2.html', context={
+            'form': form,
+            'requisition': rc,
+            'itens': itens,
+            'detail': True,
+            'label': 'Finalizar Atendimento'
         })
     else:
-        return render(request, 'pages/requisition.html', context={
-            'requisition': Requisicao.objects.get(id=id),
-            'itens': ItensRequisicao.objects.filter(requisicao=id),
+        return render(request, 'pages/requisition_v2.html', context={
+            'requisition': rc,
+            'itens': itens,
             'detail': True
         })
-
-def updateRequisicao(id, status, user):
-    rc = Requisicao.objects.get(id=id)
-    if status == "Inicio":
-        rc.status = 2
-        rc.inicio_atendimento = True
-        rc.operador_atendimento = Operador.objects.get(user=user)
-        rc.dh_inicio_atendimento = datetime.now()
-        rc.save()
-    elif status == "Fim":
-        rc.status = 3
-        rc.finalizada = True
-        rc.dh_finalizada = datetime.now()
-        rc.progress = 4
-        rc.save()
-    return rc

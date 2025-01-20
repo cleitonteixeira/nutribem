@@ -1,33 +1,27 @@
-<div class="card m-auto">
-    <div class="card-header">
-        <strong>PRODUTOS</strong>
-    </div>
-    <div class="card-body">
-        <div class="card-text">
-            <div class="table-responsive">
-                <table class="table table-bordered table-sm">
-                    <thead>
-                        <tr>
-                            <th class="bg-secondary text-white bg-gradient">ID</th>
-                            <th class="bg-secondary text-white bg-gradient">PRODUTO</th>
-                            <th class="bg-secondary text-white bg-gradient">QTD.</th>
-                            <th class="bg-secondary text-white bg-gradient">UND</th>
-                            <th class="bg-secondary text-white bg-gradient">D. UTILIZACAO</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in itens %}
-                        <tr>
-                            <td>{{ item.produto.code }}</td>
-                            <td>{{ item.produto.name }}</td>
-                            <td>{{ item.qtd|floatformat:"2g" }}</td>
-                            <td>{{ item.produto.unidade }}</td>
-                            <td>{{ item.dt_utiliza|date:"d/m/Y" }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="">ID</th>
+            <th class="">PRODUTO</th>
+            <th class="">QTD.</th>
+            <th class="">UND</th>
+            <th class="">D. UTILIZACAO</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in itens %}
+        <tr>
+            <td>{{ item.produto.code }}</td>
+            <td>{{ item.produto.name }}</td>
+            <td>{{ item.qtd|floatformat:"2g" }}</td>
+            <td>{{ item.produto.unidade }}</td>
+            <td>{{ item.dt_utiliza|date:"d/m/Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">Sem produtos</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

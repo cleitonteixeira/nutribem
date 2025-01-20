@@ -1,0 +1,55 @@
+{% extends "pages/initial.html" %}
+{% block title %}Perfil | {% endblock title %}
+{% block content_app %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="d-flex mt-1">
+            <div class="col-6">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <label for="{{ form.first_name.id_for_label }}" class="col-sm-2 col-form-label">{{ form.first_name.label }}</label>
+                        <div class="col-sm-10">
+                            {{ form.first_name }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="{{ form.last_name.id_for_label }}" class="col-sm-2 col-form-label">{{ form.last_name.label }}</label>
+                        <div class="col-sm-10">
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="col-sm-2 col-form-label">{{ form.email.label }}</label>
+                        <div class="col-sm-10">
+                            {{ form.email }}
+                        </div>
+                    </div>
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-success btn-sm mt-1">Salvar</button>
+                </form>
+            </div>
+            <div class="col-6 ms-2">
+                <p><strong>Nome: </strong> {{ user.first_name }}</p>
+                <p><strong>Sobrenome: </strong> {{ user.last_name }}</p>
+                <p><strong>E-mail: </strong> {{ user.email }}</p>
+                <p><strong>Permissão: </strong>
+                {% for group in user.groups.all %}
+                    {{ group.name }}
+                {% endfor %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .vertical-line {
+      height: 33rem;
+      border-left: 2px solid #ccc;
+    }
+  </style>
+{% endblock content_app %}

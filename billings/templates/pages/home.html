@@ -1,0 +1,11 @@
+{% extends "pages/initial.html" %}
+{% block title %}Gestor | {% endblock title %}
+{% block content_app %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="d-flex justify-content-center align-items-center mt-5">
+            <h3>Olá, {{ user.first_name }}! Acesse aqui todos os recursos internos da empresa.</h3>
+        </div>
+    </div>
+</div>
+{% endblock content_app %}

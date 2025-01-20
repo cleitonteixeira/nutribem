@@ -1,7 +1,6 @@
-{% extends "global/base.html" %}
+{% extends "pages/initial.html" %}
 {% block title %}Empresas | {% endblock title %}
-{% block content %}
-{% include "partials/menu.html" %}
+{% block content_app %}
 <div class="container-fluid">
     <div class="row">
         <div class="col-12 text-center mt-1">
@@ -49,4 +48,4 @@
         $("#id_cnpj").mask("00.000.000/0000-00"); 
     });
 </script>
-{% endblock content %}
+{% endblock content_app %}

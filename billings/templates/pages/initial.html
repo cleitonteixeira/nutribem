@@ -1,0 +1,18 @@
+{% extends "global/base.html" %}
+{% load my_tags %}
+{% block title %}Setor Compras | {% endblock title %}
+{% block content %}
+
+{% has_group "Gerente do Sistema" as id_admin %}
+{% has_group "Diretor" as is_director %}
+{% has_group "Comprador" as is_purchaser %}
+
+{% if id_admin %}
+{% include "partials/menu_admin.html" %}
+{% elif is_director %}
+{% include "partials/menu_director.html" %}
+{% elif is_purchaser %}
+{% include "partials/menu_purchaser.html" %}
+{% endif %}
+{% block content_app %}{% endblock content_app %}
+{% endblock content %}

@@ -216,12 +216,12 @@ class Requisicao(models.Model):
     dh_inicio_atendimento = models.DateTimeField(null=True, blank=True)
     finalizada = models.BooleanField(default=False)
     dh_finalizada = models.DateTimeField(null=True, blank=True)
-    observation = models.TextField(blank=True)
+    observation = models.TextField('Observações',blank=True)
     progress = models.IntegerField('Progresso',choices=PROGRESS_CHOICE, default=1)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
-        return f"{self.nr_solicitacao} - {self.data_solicitacao} - {self.qtd_itens} - {self.justificativa} - {self.get_status_display()}"
+        return f"{self.nr_solicitacao} - {self.data_solicitacao} - {self.get_classification_display() } - {self.justificativa} - {self.get_status_display()}"
     
     class Meta:
         ordering = ['data_solicitacao','branch_solicitacao','nr_solicitacao']

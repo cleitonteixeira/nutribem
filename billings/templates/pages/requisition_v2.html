@@ -1,0 +1,34 @@
+{% extends "pages/initial.html" %}
+{% block title %}Requisições | {% endblock title %}
+{% block content_app %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="mt-2 col-4">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item mb-0"><strong>Filial: </strong>{{ requisition.branch_destino.code }} - {{ requisition.branch_destino.name }}</li>
+                <li class="list-group-item mb-0"><strong>Nº RC:</strong> {{requisition.nr_solicitacao}}</li>
+                <li class="list-group-item mb-0"><strong>Data Solicitação: </strong>{{requisition.data_solicitacao|date:"d/m/Y"}}</li>
+                <li class="list-group-item mb-0"><strong>Data Aprovação:</strong> {{ requisition.dh_aprovacao|date:"d/m/Y H:i" }}</li>
+                <li class="list-group-item mb-0"><strong>Início Atendimento:</strong> {{requisition.dh_inicio_atendimento|date:"d/m/Y H:i"}}</li>
+                <li class="list-group-item mb-0"><strong>Fim Atendimento:</strong> {{requisition.dh_finalizada|date:"d/m/Y H:i"}}</li>
+                <li class="list-group-item mb-0"><strong>Status:</strong> {{ requisition.get_status_display }}</li>
+                <li class="list-group-item mb-0"><strong>Progresso:</strong> {{ requisition.get_progress_display }}</li>
+                <li class="list-group-item mb-0"><strong>Responsável:</strong> {{requisition.operador_atendimento.name}}</li>
+                <li class="list-group-item mb-0"><strong>Justificativa: </strong> <span class="text-uppercase">{{ requisition.justificativa }}</span></li>
+            </ul>
+            {% if form %}
+            <form action="" method="post">
+                {% csrf_token %}
+                {{ form.as_div }}
+                <button class="btn btn-success btn-sm" type="submit">{{ label }}</button>
+            </form>
+            {% endif %}
+        </div>
+        <div class="mt-2 col-8">
+            {% include "partials/products_request.html" %}
+
+        </div>
+    </div>
+</div>
+
+{% endblock content_app %}

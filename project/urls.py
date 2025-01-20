@@ -8,7 +8,7 @@ urlpatterns = [
     path('', include('billings.urls')),
     path('', include('synchronize.urls')),
     path('', include('sefaz.urls')),
-    path('', include('valid.urls'))
+    path('', include('validation.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
