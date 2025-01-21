@@ -1,0 +1,80 @@
+{% extends "pages/initial.html" %}
+{% block title %}Setor Compras | {% endblock title %}
+{% block content_app %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="container-fluid">
+    <div class="row">
+        <div class="resumo mt-2">
+            <div class="row">
+                <div class="col-3">
+                    <div class="card" style="height: 100%;">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                            {% include "partials/form_month.html" %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-6 text-center">
+                            <div class="card bg-success text-white" style="">
+                                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                    <div class="card-text">
+                                        <h4 class="text-nowrap">
+                                            <strong>Faturamento: {{ data|date:"m/Y" }}</strong>
+                                        </h4>
+                                        <h5>
+                                            R$ <strong>{{ fTotal.0.total|floatformat:"2g" }}</strong>
+                                        </h5>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="card bg-light text-dark" style="height: 100%;">
+                                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                    <div class="card-text text-nowrap">
+                                        <p>
+                                            <strong>Acumulado Ano</strong>
+                                        </p>
+                                        <p>
+                                            R$ <strong>{{ totalRevenue.total|floatformat:"2g" }}</strong>
+                                        </p>
+                                    </div>        
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3 text-center">
+                    <div class="card bg-light text-dark" style="height: 100%;">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                            <div class="card-text text-nowrap">
+                                <p>
+                                    <strong>Imposto Sobre Faturamento</strong>
+                                </p>
+                                <p>
+                                    R$ <strong>{{tributos.0.total|floatformat:"2g"}}</strong>
+                                </p>
+                            </div>        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-100 mb-2"></div>
+
+        <div class="graphics">
+            <div class="row">
+                <div class="col-3">
+                    {% include "partials/graph_by_type.html" %}
+                </div>
+                <div class="col-6">
+                    {% include "partials/graph_by_segment.html" %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock content_app %}

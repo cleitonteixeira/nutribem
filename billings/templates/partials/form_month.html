@@ -1,0 +1,34 @@
+<form class="row row-cols-lg-auto align-items-center mt-2 needs-validation" novalidate method="post">
+    <div class="col-12">
+        <div class="input-group has-validation">
+            <input type="month" value="{{ data|date:"Y-m" }}" class="form-control form-control-sm" id="iDate" name="iDate" required>
+        </div>
+    </div>
+    <br>
+    <div class="col-12">
+      {% csrf_token %}
+        <button type="submit" id="btn-search" class="btn btn-secondary btn-sm"><i class="fas fa-search"></i> Search</button>
+    </div>
+</form>
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+(function () {
+    'use strict'
+  
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.querySelectorAll('.needs-validation')
+  
+    // Loop over them and prevent submission
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
+</script>

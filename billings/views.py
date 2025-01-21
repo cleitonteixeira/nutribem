@@ -880,46 +880,35 @@ def setGroupEvents(name):
         return reponse
 
 
-def dashboard_faturamento(request):
+def dashboard_financial(request):
     date = calcMonth(datetime.now().strftime("%Y-%m"))
     if request.POST.get('iDate') is not None:
         date = datetime.strptime(request.POST.get('iDate'), '%Y-%m')
-        return render(request, 'pages/dashboard_faturamento.html', context={
+        return render(request, 'pages/dashboard_financial.html', context={
             'fTotal': getFaturamento(date),
             'cTotal': getCustos(date),
             'data': date,
             'billingHistory': getBillingHistory(),
             'billingType': getBillingType(date),
             'totalRevenue': getTotalRevenue(monthsYear()),
-            'variation':variation(date),
             'variationYear':variationYear(monthsYear()),
             'tributos': getTributos(date),
             'segmentacao': getBillingTypeSeg()
         })
     else:
-        return render(request, 'pages/dashboard_faturamento.html', context={
+        return render(request, 'pages/dashboard_financial.html', context={
             'fTotal': getFaturamento(date),
             'cTotal': getCustos(date),
             'data': date,
             'billingHistory': getBillingHistory(),
             'billingType': getBillingType(date),
             'totalRevenue': getTotalRevenue(monthsYear()),
-            'variation':variation(date),
             'variationYear':variationYear(monthsYear()),
             'tributos': getTributos(date),
             'segmentacao': getBillingTypeSeg()
         })
 
-def variation(date):
-    variation = []
-    pMonth = calcMonth(date.strftime("%Y-%m"))
-    pMonth = getFaturamento(pMonth)
-    aMonth = getFaturamento(date)
-    variation.append({
-        'month': calcMonth(date.strftime("%Y-%m")),
-        'value':calc_percent(aMonth[0]['total'], pMonth[0]['total'])
-    })
-    return variation
+
 
 def pYear(months):
     pYear = datetime.now().year
@@ -1008,7 +997,7 @@ def getExpenseHistory():
 def getBillingType(date):
     billing = []
     type = TypeBranch.objects.filter(
-        ~Q(name='Backoffice')
+        ~Q(name='BackOffice')
     )
     for t in type:
         branchs = Branch.objects.filter(
@@ -1030,7 +1019,7 @@ def getBillingTypeSeg():
     month = last6Months()
     billing = []
     type = TypeBranch.objects.filter(
-        ~Q(name='Backoffice')
+        ~Q(name='BackOffice')
     )
     for t in type:
         branchs = Branch.objects.filter(
@@ -1228,14 +1217,14 @@ def ClassRequisition():
     if produto == epi:
         rc.classification = 2
         rc.save()
-    elif comparar_primeiro_digito(produto,insumo):
+    elif compare_first_digit(produto,insumo):
         rc.classification = 1
         rc.save()
     else:
         rc.classification = 3
         rc.save()
 
-def comparar_primeiro_digito(numero, lista_numeros):
+def compare_first_digit(numero, lista_numeros):
     primeiro_digito_produto = str(numero)[0]
     for num in lista_numeros:
         primeiro_digito_num = str(num)[0]

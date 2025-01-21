@@ -13,7 +13,7 @@
                             Dashboard
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item {% if 'dashboard_faturamento' in request.path %}active{% endif %}" href="{% url "billings:dashboard_faturamento" %}">Receita</a></li>
+                            <li><a class="dropdown-item {% if 'dashboard_financial' in request.path %}active{% endif %}" href="{% url "billings:dashboard_financial" %}">Receita</a></li>
                             <li><a class="dropdown-item {% if 'dashboard_purchasing' in request.path %}active{% endif %}" href="{% url "billings:dashboard_purchasing" %}">Compras</a></li>
                           <li><a class="dropdown-item {% if 'dre' in request.path %}active{% endif %}" href="{% url "billings:dre" %}">DRE</a></li>
                         </ul>
