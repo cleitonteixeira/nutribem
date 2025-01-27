@@ -240,10 +240,13 @@ def calcMonth(nMonth):
     return pMonth
 
 def calc_percent (last,second_last):
-    v_final = last/second_last
-    v_final = (v_final-1)*100
-    v_final = round(v_final,2)
-    return v_final
+    if second_last > 0:
+        v_final = last/second_last
+        v_final = (v_final-1)*100
+        v_final = round(v_final,2)
+        return v_final
+    else:
+        return 0
 
 @login_required
 def home (request):
@@ -879,7 +882,7 @@ def setGroupEvents(name):
         reponse = HttpResponse("Já existe", status=400)
         return reponse
 
-
+@login_required
 def dashboard_financial(request):
     date = calcMonth(datetime.now().strftime("%Y-%m"))
     if request.POST.get('iDate') is not None:
@@ -893,6 +896,7 @@ def dashboard_financial(request):
             'totalRevenue': getTotalRevenue(monthsYear()),
             'variationYear':variationYear(monthsYear()),
             'tributos': getTributos(date),
+            'variation':variation(date),
             'segmentacao': getBillingTypeSeg()
         })
     else:
@@ -902,13 +906,23 @@ def dashboard_financial(request):
             'data': date,
             'billingHistory': getBillingHistory(),
             'billingType': getBillingType(date),
+            'variation':variation(date),
             'totalRevenue': getTotalRevenue(monthsYear()),
             'variationYear':variationYear(monthsYear()),
             'tributos': getTributos(date),
             'segmentacao': getBillingTypeSeg()
         })
 
-
+def variation(date):
+    variation = []
+    pMonth = calcMonth(date.strftime("%Y-%m"))
+    pMonth = getFaturamento(pMonth)
+    aMonth = getFaturamento(date)
+    variation.append({
+        'month': calcMonth(date.strftime("%Y-%m")),
+        'value':calc_percent(aMonth[0]['total'], pMonth[0]['total'])
+    })
+    return variation
 
 def pYear(months):
     pYear = datetime.now().year
@@ -961,7 +975,11 @@ def getFaturamento(date):
         period = date.strftime("%m/%Y"),
         type__in=['VENDA DE SERVICOS','VENDA DE PRODUTOS','REVENDA DE PRODUTOS','VENDAS CANCELADAS']
     ).values('period').annotate(total=Sum('value'))
-    return faturamento
+    if faturamento:
+        return faturamento
+    else:
+        faturamento = [{'period': date, 'total': 0}]
+        return faturamento
 
 def getCustos(date):
     custos = FinancialTransactions.objects.filter(
@@ -984,7 +1002,16 @@ def getBillingHistory():
         type__in=['VENDA DE SERVICOS','VENDA DE PRODUTOS','REVENDA DE PRODUTOS','VENDAS CANCELADAS'],
         period__in=month
     ).values('period').annotate(total=Sum('value'))
+    faturamento = sorted(faturamento, key=lambda x: extract_month_year(x['period']))
     return faturamento
+
+def extract_month_year(period_str):
+    """Extracts month and year from the given period string."""
+    try:
+        month, year = map(int, period_str.split('/'))
+        return datetime(year, month, 1)  # Create a datetime object for consistent sorting
+    except ValueError:
+        return datetime.max  # Handle invalid periods by placing them at the end
 
 def getExpenseHistory():
     month = last6Months()
@@ -1265,7 +1292,7 @@ def requisition(request, id):
                     'detail': True,
                 })
     
-    elif rc.inicio_atendimento == False:
+    elif rc.inicio_atendimento == False and request.user.groups.filter(name="Comprador").exists():
         form = StartRequestForm(
             initial={
                     'status': '2',
@@ -1280,14 +1307,14 @@ def requisition(request, id):
             'detail': True,
             'label': 'Iniciar Atendimento'
         })
-    elif rc.inicio_atendimento and not rc.finalizada:
+    elif rc.inicio_atendimento and not rc.finalizada and request.user.groups.filter(name="Comprador").exists():
         form = EndRequestForm( 
-                              initial={
-                                  'status': '3',
-                                  'finalizada': True,
-                                  'dh_finalizada': datetime.now(),
-                                  'progress': '4'
-                                  },
+                initial={
+                    'status': '3',
+                    'finalizada': True,
+                    'dh_finalizada': datetime.now(),
+                    'progress': '4'
+                    },
                               instance=rc )
         return render(request, 'pages/requisition_v2.html', context={
             'form': form,

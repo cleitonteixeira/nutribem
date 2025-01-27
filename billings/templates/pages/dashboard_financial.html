@@ -25,7 +25,12 @@
                                         <h5>
                                             R$ <strong>{{ fTotal.0.total|floatformat:"2g" }}</strong>
                                         </h5>
-                                        
+                                        <p class="text-nowrap">
+                                            <small>Comparado a <strong>{{variation.0.month|date:"m/Y"}}</strong>:
+                                                {% if variation.0.value > 0 %} <i class="fas fa-angle-double-up"></i>{% else %} <i class="fas fa-angle-double-down"></i>{% endif %}
+                                                {{variation.0.value}}% 
+                                            </small>
+                                        </p>
                                     </div>
                                 </div>
                             </div>

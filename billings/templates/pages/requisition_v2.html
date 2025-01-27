@@ -23,6 +23,9 @@
                 <button class="btn btn-success btn-sm" type="submit">{{ label }}</button>
             </form>
             {% endif %}
+            <div class="w-100 mb-2"></div>
+            <a href="{% url "billings:requests" 0 %}" class="btn btn-primary btn-sm">Requisições Abertas</a>
+            <a href="{% url "billings:requests" 1 %}" class="btn btn-success btn-sm">Requisições Concluídas</a>
         </div>
         <div class="mt-2 col-8">
             {% include "partials/products_request.html" %}
