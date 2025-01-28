@@ -35,7 +35,6 @@ def ServiceTime( start_date, end_date ):
 
     if fim <= inicio:
         return 0
-
     horas_uteis = 0
     data_atual = inicio
     while data_atual < fim:
@@ -79,7 +78,6 @@ def MostRequestedProducts(today):
 def SincRC():
     CreateProd()
     rec = dq.consultaRc()
-    print(rec)
     for r in rec:
         rc = Requisicao(
             branch_solicitacao = Branch.objects.get(code=r[0]),
