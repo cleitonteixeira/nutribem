@@ -1,0 +1,84 @@
+<div class="card">
+    <div class="card-header text-card-title">
+      <small>Evolução do Faturamento Mensal</small>
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <div>
+                <canvas id="graficG"></canvas>
+            </div>
+        </div>        
+    </div>
+</div>
+<script>    
+    const ctx = document.getElementById('graficG').getContext('2d');
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        datasets: [
+        {
+          label: 'Agricola',
+          data: [
+          {% for seg in segmentacao %}
+            {% if seg.name == "Agricola" %}
+            {% for t in seg.total %}
+            {{t.total|floatformat:"0"}},
+            {% endfor %}
+            {% endif %}
+          {% endfor %}
+          ],
+          borderColor: 'rgba(22,219,156,0.8)',
+          backgroundColor: 'rgba(22,219,156,0.8)',
+        },{
+          label: 'Site',
+          data: [
+          {% for seg in segmentacao %}
+            {% if seg.name == "Site" %}
+            {% for t in seg.total %}
+            {{t.total|floatformat:"0"}},
+            {% endfor %}
+            {% endif %}
+          {% endfor %}
+          ],
+          borderColor: 'rgba(22,91,219,0.8)',
+          backgroundColor: 'rgba(22,91,219,0.8)',
+        },
+        
+        {% comment %} {
+          label: 'Faturamento',
+          data: 
+          [
+          {% for billing in billingHistory %}
+            {{billing.total|floatformat:"0"}},
+          {% endfor %}
+          ],
+          borderWidth: 1,
+          borderColor: 'rgba(25,135,84,0.99)',
+          backgroundColor: 'rgba(25,135,84,0.8)',
+        } {% endcomment %}
+        
+        ],
+    
+        labels: [
+        {% for billing in billingHistory %}
+            "{{billing.period}}",
+          {% endfor %}
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            stacked: true,
+            ticks: {
+              autoSkip: false,
+              maxRotation: 0
+            }
+          },
+          y: {
+            stacked: true
+          }
+        }
+      },
+    });
+  </script>

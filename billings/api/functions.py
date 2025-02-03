@@ -1,5 +1,5 @@
 from ..models import *
-from django.db.models import Sum, Q, Count
+from django.db.models import Sum, Q, Count, F
 from django.db.models.functions import TruncMonth
 from datetime import datetime, timedelta
 
@@ -150,3 +150,11 @@ def CreateProd():
                 print("Ja Existe")
         except Exception as e:
             print(e)
+
+def Graph_By_Type_Purchasing():
+    purchasing = Requisicao.objects.annotate(
+        month=TruncMonth('data_solicitacao')
+    ).values('month', 'classification').annotate(
+        total=Count('id')
+    ).order_by('month', 'classification')
+    print (purchasing)

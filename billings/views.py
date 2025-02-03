@@ -7,6 +7,9 @@ from django.http import HttpResponse, JsonResponse
 from datetime import datetime, timedelta
 from .models import *
 from .forms import *
+
+from .api import functions as fc
+
 import pandas as pd
 import calendar
 import openpyxl
@@ -1110,6 +1113,7 @@ def requests_v2(request):
 
 @login_required
 def dashboard_purchasing(request):
+    fc.Graph_By_Type_Purchasing()
     today = datetime.now()
     total_requests_month = Requisicao.objects.filter(
         data_solicitacao__month=today.month,
