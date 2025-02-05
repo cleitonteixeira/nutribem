@@ -1,0 +1,60 @@
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<div class="card">
+    <div class="card-header text-card-title">
+        <small>Quantidade de Requisições por Tipo</small>
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <div>
+                <canvas id="graficT"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<script>    
+    const ctx2 = document.getElementById('graficT').getContext('2d');
+
+    new Chart(ctx2, {
+        type: 'pie',
+        data: {
+            labels: [
+                {% for metrics in metrics_pie %}
+                    "{{metrics.name}}",
+                {% endfor %}
+            ],
+            datasets: [{
+                label: '-',
+                data: 
+                    [
+                    {% for metrics in metrics_pie %}
+                        {% for t in metrics.total %}
+                            {{ t.total|floatformat:"0" }},
+                        {% endfor %}
+                    {% endfor %}
+                    ],
+                backgroundColor: [
+                    'rgba(22,219,156,0.8)',
+                    'rgba(22,91,219,0.8)',
+                    'rgba(181,124,247,0.8)'
+                  ],
+            }],
+        },
+        options: {
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        const total = ctx.chart.data.datasets[0].data.reduce((sum, current) => sum + current, 0);
+                        const percentage = ((value / total) * 100).toFixed(2);
+                        return percentage + '%';
+                    },
+                    color: '#fff',
+                    font: {
+                        size: 14
+                    }
+                },
+                
+            }
+          },
+          plugins: [ChartDataLabels]
+    });
+  </script>

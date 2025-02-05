@@ -1,6 +1,6 @@
-<div class="card">
+<div class="card" style="width: 28rem;">
     <div class="card-header text-card-title">
-      <small>Evolução do Faturamento Mensal</small>
+      <small>Quantidade de Requisições por Mês</small>
     </div>
     <div class="card-body">
         <div class="card-text">
@@ -18,11 +18,11 @@
       data: {
         datasets: [
         {
-          label: 'Agricola',
+          label: 'INSUMOS',
           data: [
-          {% for seg in segmentacao %}
-            {% if seg.name == "Agricola" %}
-            {% for t in seg.total %}
+          {% for metric in metrics %}
+            {% if metric.name == "Insumo" %}
+            {% for t in metric.total %}
             {{t.total|floatformat:"0"}},
             {% endfor %}
             {% endif %}
@@ -31,11 +31,11 @@
           borderColor: 'rgba(22,219,156,0.8)',
           backgroundColor: 'rgba(22,219,156,0.8)',
         },{
-          label: 'Site',
+          label: 'EPI',
           data: [
-          {% for seg in segmentacao %}
-            {% if seg.name == "Site" %}
-            {% for t in seg.total %}
+          {% for metric in metrics %}
+            {% if metric.name == "EPI" %}
+            {% for t in metric.total %}
             {{t.total|floatformat:"0"}},
             {% endfor %}
             {% endif %}
@@ -43,26 +43,25 @@
           ],
           borderColor: 'rgba(22,91,219,0.8)',
           backgroundColor: 'rgba(22,91,219,0.8)',
-        },
-        
-        {% comment %} {
-          label: 'Faturamento',
-          data: 
-          [
-          {% for billing in billingHistory %}
-            {{billing.total|floatformat:"0"}},
+        },{
+          label: 'OUTROS',
+          data: [
+          {% for metric in metrics %}
+            {% if metric.name == "Outros" %}
+            {% for t in metric.total %}
+            {{t.total|floatformat:"0"}},
+            {% endfor %}
+            {% endif %}
           {% endfor %}
           ],
-          borderWidth: 1,
-          borderColor: 'rgba(25,135,84,0.99)',
-          backgroundColor: 'rgba(25,135,84,0.8)',
-        } {% endcomment %}
-        
-        ],
+          borderColor: 'rgba(181,124,247,0.8)',
+          backgroundColor: 'rgba(181,124,247,0.8)',
+        },
+      ],
     
         labels: [
-        {% for billing in billingHistory %}
-            "{{billing.period}}",
+        {% for month in months %}
+            "{{ month }}",
           {% endfor %}
         ],
       },

@@ -1,5 +1,6 @@
 import oracledb
 
+
 # configuração user
 
 username = "teknisa"
@@ -28,6 +29,34 @@ def consultaOperador():
         if connection:
             connection.close()
 
+def Read_And_Create_Product(code):
+    print("############")
+    try:
+        connection = oracledb.connect(user=username, password=password,
+                                    host="192.168.0.91", port=1521, service_name="orclpdb")
+        print("############")
+        print(connection.version)
+        
+        cursor = connection.cursor()
+
+        cursor.execute(f"""
+            SELECT 
+            CASE
+            WHEN SUBSTR(CDPRODUTO, 1, 3) = '866' THEN SUBSTR(CDPRODUTO, 1, 3)
+            ELSE SUBSTR(CDPRODUTO, 1, 1)
+            END
+            AS "CLASSE",CDPRODUTO, NMPRODUTO, SGUNIDADE FROM PRODUTO
+            WHERE CDPRODUTO = {code}
+        """)
+        rows = cursor.fetchall()
+        return rows
+    except oracledb.DatabaseError as e:
+        print (e)
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
 def consultaFiliais():
     print("############")
@@ -52,7 +81,7 @@ def consultaFiliais():
         if connection:
             connection.close()
             
-def consultaRc():
+def consultaRc(date_rc):
     print("############")
     try:
         connection = oracledb.connect(user=username, password=password,
@@ -91,7 +120,7 @@ def consultaRc():
             INNER JOIN ITEMSOLI i ON i.CDFILSOLI = s.CDFILSOLI 
             AND i.CDFILLAN = s.CDFILLANCA 
             AND i.NRSOLICMP = s.NRSOLICMP
-            WHERE s.DTSOLCMP >= TO_DATE('01/01/2025', 'DD/MM/YYYY') 
+            WHERE s.DTSOLCMP >= TO_DATE('{date_rc}', 'DD/MM/YYYY') 
             AND s.IDSOLEXTRA = 'S'
             GROUP BY
                 s.CDFILSOLI,
@@ -166,14 +195,22 @@ def CriaClasse():
         if connection:
             connection.close()
 
-def CriaProdutos():
+def CriaProdutos(codes):
     print("############")
     try:
         connection = oracledb.connect(user=username, password=password,
                                     host="192.168.0.91", port=1521, service_name="orclpdb")
         print("############")
         print(connection.version)
-
+        product_codes = [produtos for produtos in codes ]
+        
+        print(
+            f"""
+            AND CDPRODUTO NOT INT ({product_codes})
+            ORDER BY NMPRODUTO
+            """
+        )
+        
         cursor = connection.cursor()
 
         cursor.execute(f"""
@@ -185,6 +222,7 @@ def CriaProdutos():
             AS "CLASSE",CDPRODUTO, NMPRODUTO, SGUNIDADE FROM PRODUTO
             WHERE NMPRODUTO NOT LIKE '.' AND CDPRODUTO IN
             (SELECT DISTINCT(CDPRODUTO) FROM ITEMSOLI WHERE DTUTILIZA >= '01/01/2024' AND CDOPERAPROV IS NOT NULL)
+            AND CDPRODUTO NOT INT ({product_codes})
             ORDER BY NMPRODUTO
         """)
         rows = cursor.fetchall()
@@ -198,6 +236,7 @@ def CriaProdutos():
             connection.close()
 
 def consultaProdutos(code):
+    
     print("############")
     try:
         connection = oracledb.connect(user=username, password=password,

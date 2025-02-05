@@ -1,5 +1,5 @@
 from ..models import *
-from django.db.models import Sum, Q, Count, F
+from django.db.models import Sum, Q, Count, F, DateTimeField
 from django.db.models.functions import TruncMonth
 from datetime import datetime, timedelta
 
@@ -152,9 +152,68 @@ def CreateProd():
             print(e)
 
 def Graph_By_Type_Purchasing():
-    purchasing = Requisicao.objects.annotate(
-        month=TruncMonth('data_solicitacao')
-    ).values('month', 'classification').annotate(
-        total=Count('id')
-    ).order_by('month', 'classification')
-    print (purchasing)
+    purchase = []
+    classification = [{'id': 1, 'name':'Insumo'},{'id': 2, 'name':'EPI'},{'id': 3, 'name':'Outros'}]
+    for classifies in classification:
+        purchasing = Requisicao.objects.annotate(
+            month=TruncMonth('data_solicitacao')
+        ).filter(classification=classifies['id']).values('month', 'classification').annotate(
+            total=Count('id')
+        ).order_by('month', 'classification')
+        purchase.append({
+            'name': classifies['name'],
+            'total': purchasing
+        })
+    return purchase
+
+def Months_Graph_Purchasing(): 
+    months = list(Requisicao.objects.annotate(month=TruncMonth('data_solicitacao')).values_list('month', flat=True).distinct())
+    unique_months = set(months)
+    months = [month.strftime('%m/%Y') for month in unique_months]
+    months = sorted(months, key=Sort_Month_Year)
+    return months
+    
+def Sort_Month_Year(item):
+    month, year = item.split('/')  # Divide a string em mês e ano
+    return int(year), int(month)   # Retorna uma tupla (ano, mes) para ordenação
+    
+def Graph_Pie_By_Type_Purchasing():
+    today   = datetime.today()
+    today   = today.replace(day=1)
+    last_day_previous_month = today - timedelta(days=1)
+    first_day_previous_month = last_day_previous_month.replace(day=1)
+    previous_month = first_day_previous_month.strftime('%Y-%m-%d')
+    purchase = []
+    classification = [{'id': 1, 'name':'Insumo'},{'id': 2, 'name':'EPI'},{'id': 3, 'name':'Outros'}]
+    for classifies in classification:
+        purchasing = Requisicao.objects.annotate(
+            month=TruncMonth('data_solicitacao')
+        ).filter(
+            classification=classifies['id'],
+            month = previous_month
+        ).values('month', 'classification').annotate(
+            total=Count('id')
+        ).order_by('month', 'classification')
+        purchase.append({
+            'name': classifies['name'],
+            'total': purchasing
+        })
+    return purchase
+    
+def Create_Product(code):
+    product = dq.Read_And_Create_Product(code)
+    p = Produtos(
+        code = product[0][1],
+        name = product[0][2],
+        classification = ClassProduto.objects.get(code=product[0][0]),
+        unidade = product[0][3]
+    )
+    try:    
+        if not Produtos.objects.filter(code=product[0][1]).exists():
+            p.save()
+            print("Salvo")
+            return p
+        else:
+            print("Ja Existe")
+    except Exception as e:
+        print(e)

@@ -4,11 +4,12 @@ from django.db.models import Sum, Q, Count
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
-from datetime import datetime, timedelta
+from datetime import date ,datetime, timedelta
 from .models import *
 from .forms import *
 
 from .api import functions as fc
+from .api import database_query as dq
 
 import pandas as pd
 import calendar
@@ -477,22 +478,23 @@ def synchronization(request):
         })
         
 def CreateProd():
-    produtos = attBanco.CriaProdutos()
-    for prod in produtos:
-        p = Produtos(
-            code = prod[1],
-            name = prod[2],
-            classification = ClassProduto.objects.get(code=prod[0]),
-            unidade = prod[3]
-        )
-        try:    
-            if not Produtos.objects.filter(code=prod[1]).exists():
-                p.save()
-                print("Salvo")
-            else:
-                print("Ja Existe")
-        except Exception as e:
-            print(e)
+    produtos = dq.CriaProdutos()
+    if produtos is not None:
+        for prod in produtos:
+            p = Produtos(
+                code = prod[1],
+                name = prod[2],
+                classification = ClassProduto.objects.get(code=prod[0]),
+                unidade = prod[3]
+            )
+            try:    
+                if not Produtos.objects.filter(code=prod[1]).exists():
+                    p.save()
+                    print("Salvo")
+                else:
+                    print("Ja Existe")
+            except Exception as e:
+                print(e)
         
 def ConvertDate(date):
     print(date)
@@ -1113,7 +1115,7 @@ def requests_v2(request):
 
 @login_required
 def dashboard_purchasing(request):
-    fc.Graph_By_Type_Purchasing()
+    metrics = fc.Graph_By_Type_Purchasing()
     today = datetime.now()
     total_requests_month = Requisicao.objects.filter(
         data_solicitacao__month=today.month,
@@ -1122,16 +1124,20 @@ def dashboard_purchasing(request):
     hours_insumos = CalcServiceTime(today,1)
     hours_epi = CalcServiceTime(today,2)
     hours_outros = CalcServiceTime(today,3)
-    
+    months = fc.Months_Graph_Purchasing()
     requester = LargestRequester(today)
     products = MostRequestedProducts(today)
+    metrics_pie = fc.Graph_Pie_By_Type_Purchasing()
     return render(request, 'pages/dashboard_purchasing.html', context={
         'total_requests_month': total_requests_month,
         'hours_insumos': hours_insumos,
         'hours_epi':hours_epi,
         'hours_outros':hours_outros,
         'requester': requester,
-        'products': products
+        'products': products,
+        'metrics':metrics,
+        'metrics_pie': metrics_pie,
+        'months':months
     })
 
 def CalcServiceTime(today, classification):
@@ -1205,9 +1211,10 @@ def MostRequestedProducts(today):
         return None
     
 def SincRC():
-    CreateProd()
-    rec = attBanco.consultaRc()
-    print(rec)
+    date_rc = date.today()
+    date_rc = date_rc - timedelta(days=5)
+    date_rc = date_rc.strftime("%d/%m/%Y")
+    rec = dq.consultaRc(date_rc)
     for r in rec:
         rc = Requisicao(
             branch_solicitacao = Branch.objects.get(code=r[0]),
@@ -1227,14 +1234,21 @@ def SincRC():
             print("RC SALVA")
             itens = attBanco.consultaItensRc(rc.nr_solicitacao, rc.branch_solicitacao, rc.branch_destino)
             for i in itens:
-                item = ItensRequisicao(
-                    requisicao = rc,
-                    produto = Produtos.objects.get(code=i[1]),
-                    qtd = i[2],
-                    dt_utiliza = i[3]
-                )
+                if Produtos.objects.filter(code=i[1]).exists():
+                    item = ItensRequisicao(
+                        requisicao = rc,
+                        produto = Produtos.objects.get(code=i[1]),
+                        qtd = i[2],
+                        dt_utiliza = i[3]
+                    )
+                else:
+                    item = ItensRequisicao(
+                        requisicao = rc,
+                        produto = fc.Create_Product(i[1]),
+                        qtd = i[2],
+                        dt_utiliza = i[3]
+                    )   
                 item.save()
-                print("Item Atualizado")
         ClassRequisition()
 
 def ClassRequisition():

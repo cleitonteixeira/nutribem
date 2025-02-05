@@ -1,47 +1,10 @@
 {% extends "pages/initial.html" %}
 {% block title %}Setor Compras | {% endblock title %}
 {% block content_app %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-3 mt-1">
-            <div class="card text-center text-nowrap">
-                <div class="card-body">
-                    <div class="card-text">
-                        <p class="m-1"><strong>TOP 5 PRODUTOS</strong></p>
-                        <ul class="list-group">
-                            {% for product in products %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center text-small">
-                                {{ product.produto__name }}
-                                <span class="badge bg-primary rounded-pill">{{ product.total }}</span>
-                            </li>
-                            {% empty %}
-                            <p>Sem dados</p>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-1">
-                <div class="card text-center text-nowrap">
-                    <div class="card-body">
-                        <div class="card-text">
-                            <p class="m-1"><strong>TOP 5 SOLICITANTES</strong></p>
-                            <ul class="list-group">
-                                {% for bss in requester %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center text-small">
-                                    {{ bss.branch_destino__name }}
-                                    <span class="badge bg-primary rounded-pill">{{ bss.total }}</span>
-                                </li>
-                                {% empty %}
-                                <p>Sem dados</p>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-3 mt-1">
+        <div class="col-2 mt-1">
             <div class="card text-center">
                 <div class="card-body">
                     <h5 class="card-title">Requisições</h5>
@@ -101,8 +64,50 @@
                 </div>
             </div>
         </div>
-        
-
+        <div class="col-3 mt-1">
+            <div class="card text-center text-nowrap">
+                <div class="card-body">
+                    <div class="card-text">
+                        <p class="m-1"><strong>TOP 5 PRODUTOS</strong></p>
+                        <ul class="list-group">
+                            {% for product in products %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center text-small">
+                                {{ product.produto__name }}
+                                <span class="badge bg-primary rounded-pill">{{ product.total }}</span>
+                            </li>
+                            {% empty %}
+                            <p>Sem dados</p>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-1">
+                <div class="card text-center text-nowrap">
+                    <div class="card-body">
+                        <div class="card-text">
+                            <p class="m-1"><strong>TOP 5 SOLICITANTES</strong></p>
+                            <ul class="list-group">
+                                {% for bss in requester %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center text-small">
+                                    {{ bss.branch_destino__name }}
+                                    <span class="badge bg-primary rounded-pill">{{ bss.total }}</span>
+                                </li>
+                                {% empty %}
+                                <p>Sem dados</p>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4 mt-1">
+            {% include "partials/Graph_By_Type_Purchasing.html" %}
+        </div>
+        <div class="col-3 mt-1">
+            {% include "partials/Graph_Pie_Type_Purchasing.html" %}
+        </div>
     </div>
 </div>
 
