@@ -145,7 +145,6 @@ def consultaRc(date_rc):
         if connection:
             connection.close()
 
-
 def consultaItensRc(rc, solicita, destino):
     print("############")
     try:

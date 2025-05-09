@@ -1296,6 +1296,7 @@ def requisition(request, id):
                     })
         elif request.POST.get('status') == "3":
             form = EndRequestForm( request.POST, instance=rc )
+            print (form)
             if form.is_valid():
                 form.save()
                 return render(request, 'pages/requisition_v2.html',context={
@@ -1325,7 +1326,7 @@ def requisition(request, id):
             'detail': True,
             'label': 'Iniciar Atendimento'
         })
-    elif rc.inicio_atendimento and not rc.finalizada and request.user.groups.filter(name="Comprador").exists():
+    elif rc.inicio_atendimento and not rc.finalizada :
         form = EndRequestForm( 
                 initial={
                     'status': '3',

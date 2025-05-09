@@ -4,6 +4,12 @@ from requests import request
 from .models import *
 
 class EndRequestForm(forms.ModelForm):
+    TIPO_CHOICE = (
+        (1, 'EXTRA EVENTO'),
+        (2, 'ERRO DE PLANEJAMENTO'),
+        (3, 'ERRO DE ESTOQUE'),
+        (4, 'AUMENTO DE COMENSAIS'),
+    )
     status = forms.IntegerField(widget=forms.HiddenInput())
     observation = forms.CharField(
         label='Observações',
@@ -14,13 +20,18 @@ class EndRequestForm(forms.ModelForm):
                 'cols': 30
             }),
     )
+    tipo = forms.ChoiceField(
+        choices=TIPO_CHOICE,
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm mb-1'})
+    )
+    valor = forms.DecimalField(widget=forms.TextInput(attrs={'class': 'form-control form-control-sm mb-1','min': '0'}))
     finalizada = forms.BooleanField(widget=forms.HiddenInput(), initial=True)
     dh_finalizada = forms.DateTimeField(widget=forms.HiddenInput(), initial=datetime.now())
     progress = forms.IntegerField(widget=forms.HiddenInput(), initial=4)
     
     class Meta:
         model = Requisicao
-        fields = ['observation','status','finalizada','dh_finalizada','progress']
+        fields = ['observation','status','finalizada','dh_finalizada','progress','tipo','valor']
 
         
 class StartRequestForm(forms.ModelForm):

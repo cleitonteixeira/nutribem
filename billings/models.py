@@ -201,6 +201,12 @@ class Requisicao(models.Model):
         (3,'ATRASADO'),
         (4, 'CONCLUIDO'),
     )
+    TIPO_CHOICE = (
+        (1, 'EXTRA EVENTO'),
+        (2, 'ERRO DE PLANEJAMENTO'),
+        (3, 'ERRO DE ESTOQUE'),
+        (3, 'AUMENTO DE COMENSAIS'),
+    )
     branch_solicitacao = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, related_name="branch_solicitacao")
     branch_destino = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, related_name="branch_destino")
     operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, related_name="operador")
@@ -218,6 +224,9 @@ class Requisicao(models.Model):
     dh_finalizada = models.DateTimeField(null=True, blank=True)
     observation = models.TextField('Observações',blank=True)
     progress = models.IntegerField('Progresso',choices=PROGRESS_CHOICE, default=1)
+    tipo = models.IntegerField('Tipo', choices=TIPO_CHOICE, default=1)
+    valor = models.FloatField('Valor', default=0,blank=True)
+    
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
