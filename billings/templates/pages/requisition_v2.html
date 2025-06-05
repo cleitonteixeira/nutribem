@@ -14,8 +14,15 @@
                 <li class="list-group-item mb-0"><strong>Status:</strong> {{ requisition.get_status_display }}</li>
                 <li class="list-group-item mb-0"><strong>Progresso:</strong> {{ requisition.get_progress_display }}</li>
                 <li class="list-group-item mb-0"><strong>Responsável:</strong> {{requisition.operador_atendimento.name}}</li>
-                <li class="list-group-item mb-0"><strong>Justificativa: </strong> <span class="text-uppercase">{{ requisition.justificativa }}</span></li>
+                <li class="list-group-item mb-0"><strong>Justificativa: </strong> <span class="text-uppercase">
+                    {% if requisition.tipo %}
+                        {{ requisition.get_tipo_display }}
+                    {% else %}
+                        {{ requisition.justificativa }}
+                    {% endif %}
+                </span></li>
                 {% if requisition.observation %}<li class="list-group-item mb-0"><strong>Observações: </strong> <span class="text-uppercase">{{ requisition.observation }}</span></li>{% endif %}
+                {% if requisition.valor %}<li class="list-group-item mb-0"><strong>Valor: </strong>R$ <span class="text-uppercase">{{ requisition.valor }}</span></li>{% endif %}
             </ul>
             {% if form %}
             <form action="" method="post">

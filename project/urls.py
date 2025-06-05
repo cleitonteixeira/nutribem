@@ -8,7 +8,8 @@ urlpatterns = [
     path('', include('billings.urls')),
     path('', include('synchronize.urls')),
     path('', include('sefaz.urls')),
-    path('', include('validation.urls'))
+    path('', include('validation.urls')),
+    path('', include('chatsentinel.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -205,7 +205,8 @@ class Requisicao(models.Model):
         (1, 'EXTRA EVENTO'),
         (2, 'ERRO DE PLANEJAMENTO'),
         (3, 'ERRO DE ESTOQUE'),
-        (3, 'AUMENTO DE COMENSAIS'),
+        (4, 'AUMENTO DE COMENSAIS'),
+        (5, 'AJUSTE DE CONTRATO'),
     )
     branch_solicitacao = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, related_name="branch_solicitacao")
     branch_destino = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, related_name="branch_destino")

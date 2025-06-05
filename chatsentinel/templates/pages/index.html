@@ -1,0 +1,97 @@
+{% extends "global/base.html" %}
+{% block title %}ChatBot | {% endblock title %}
+{% block content %}
+<style>
+    body{
+        background: linear-gradient(to bottom, #2f2f2f , #2f2f2f );
+    }
+    #contador {
+        font-size: 2em;
+    }
+</style>
+<div class="rounded">
+    <table class="table table-dark table-sm">
+        <thead>
+            <tr class="bg-success text-center">
+                <th class="bg-dark text-white">Departamento</th>
+                <th class="bg-dark text-danger">Em Aberto</th>
+                <th class="bg-dark text-primary">Em Atendimento</th>
+                <th class="bg-dark text-warning">Aguardando</th>
+                <th class="bg-dark text-secondary">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for linha in dados %}
+            <tr>
+                <td class="text-left align-middle">
+                    <span class="ms-3"><i class="fas fa-users"></i> <strong>{{ linha.0 }}</strong></span>
+                </td>
+                <td>
+                    <div class="d-grid">
+                        <button type="button" class="btn btn-sm btn-outline-danger"><strong>{{ linha.1 }}</strong></button>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-grid">
+                        <button type="button" class="btn btn-sm btn-outline-primary"><strong>{{ linha.2 }}</strong></button>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-grid">
+                        <button type="button" class="btn btn-sm btn-outline-warning"><strong>{{ linha.3 }}</strong></button>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-grid">
+                        <button type="button" class="btn btn-sm btn-secondary"><strong>{{ linha.4 }}</strong></button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div>
+        <div id="contador" class="text-white p-2">4:30</div>
+        <div id="mensagem" class="text-white p-2" style="display:none;"><h3>Buscando dados ...</h3></div>
+    </div>
+</div>
+<script>
+    // Atualiza a página a cada 15 minutos (900000 ms)
+    setInterval(function () {
+        window.location.reload();
+    }, 270000); // 900000 ms = 15 minutos
+    
+    let tempoRestante = 270;
+  const contadorElement = document.getElementById('contador');
+  const mensagemElement = document.getElementById('mensagem');
+  let intervaloContador;
+  let intervaloPontos;
+  let pontos = '';
+
+  function atualizarContador() {
+    const minutos = Math.floor(tempoRestante / 60);
+    const segundos = tempoRestante % 60;
+    const segundosFormatado = segundos < 10 ? '0' + segundos : segundos;
+    contadorElement.textContent = `${minutos}:${segundosFormatado}`;
+    tempoRestante--;
+
+    if (tempoRestante < 0) {
+      clearInterval(intervaloContador);
+      contadorElement.style.display = 'none';
+      mensagemElement.style.display = 'block';
+      intervaloPontos = setInterval(atualizarPontos, 500);
+    }
+  }
+
+  function atualizarPontos() {
+    if (pontos.length < 10) {
+      pontos += '.';
+    } else {
+      pontos = '';
+    }
+    mensagemElement.textContent = `Buscando dados${pontos}`;
+  }
+
+  intervaloContador = setInterval(atualizarContador, 1000);
+</script>
+{% endblock content %}

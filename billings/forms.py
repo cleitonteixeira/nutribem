@@ -9,6 +9,7 @@ class EndRequestForm(forms.ModelForm):
         (2, 'ERRO DE PLANEJAMENTO'),
         (3, 'ERRO DE ESTOQUE'),
         (4, 'AUMENTO DE COMENSAIS'),
+        (5, 'AJUSTE DE CONTRATO'),
     )
     status = forms.IntegerField(widget=forms.HiddenInput())
     observation = forms.CharField(
@@ -33,9 +34,7 @@ class EndRequestForm(forms.ModelForm):
         model = Requisicao
         fields = ['observation','status','finalizada','dh_finalizada','progress','tipo','valor']
 
-        
 class StartRequestForm(forms.ModelForm):
-    
     status = forms.IntegerField(widget=forms.HiddenInput())
     inicio_atendimento = forms.BooleanField(widget=forms.HiddenInput(), initial=True)
     operador_atendimento = forms.ModelChoiceField(queryset=Operador.objects.all(), widget=forms.HiddenInput())

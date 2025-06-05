@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'billings',
     'synchronize',
     'validation',
-    'sefaz'
+    'sefaz',
+    'chatsentinel'
 ]
 
 MIDDLEWARE = [
