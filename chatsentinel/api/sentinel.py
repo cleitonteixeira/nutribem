@@ -50,7 +50,7 @@ def FindCalls():
             print(dados[-5:]) """
 
     dados = []
-    for linha in linhas[:15]:
+    for linha in linhas[2:15]:
         colunas = linha.find_elements(By.TAG_NAME, "td")
         linha_dados = []
         for coluna in colunas:
@@ -62,4 +62,5 @@ def FindCalls():
         if linha_dados:
             dados.append(linha_dados[-5:])
     driver.quit()
+    print (dados)
     return dados
